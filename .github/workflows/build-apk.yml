@@ -1,0 +1,35 @@
+name: Build APK
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: '11'
+
+      - name: Install Unity
+        uses: game-ci/unity-install@v2
+        with:
+          unity-version: '2021.3.0f1'
+
+      - name: Build Android APK
+        uses: game-ci/unity-build@v2
+        with:
+          targetPlatform: "Android"
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v2
+        with:
+          name: apk
+          path: **/*.apk
