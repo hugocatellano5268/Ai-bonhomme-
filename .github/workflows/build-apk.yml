@@ -1,4 +1,4 @@
-name: Build APK
+name: Build Unity APK
 
 on:
   push:
@@ -8,28 +8,25 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-
-      - name: Set up JDK
-        uses: actions/setup-java@v1
+      - name: Checkout code
+        uses: actions/checkout@v3
         with:
-          java-version: '11'
+          lfs: true
 
-      - name: Install Unity
-        uses: game-ci/unity-install@v2
+      - name: Build with Unity
+        uses: game-ci/unity-builder@v2
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
-          unity-version: '2021.3.0f1'
+          targetPlatform: Android
+          unityVersion: 2021.3.5f1
 
-      - name: Build Android APK
-        uses: game-ci/unity-build@v2
+      - name: Upload Build
+        uses: actions/upload-artifact@v3
         with:
-          targetPlatform: "Android"
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v2
-        with:
-          name: apk
-          path: **/*.apk
+          name: build-apk
+          path: build/
